@@ -148,3 +148,16 @@ chart_data = df.groupby("contractend").count()["contractnumber"]
 
 st.bar_chart(chart_data)
 st.dataframe(df)
+
+# if __name__ == "__main__":
+#     db2 = client.busserebatetraces
+#     dw = db2.data_warehouse
+#     print(
+#         dw.delete_many(
+#             {
+#                 "__file__": "OM_R13104_09_2022.xlsx",
+#                 "__month__": "09",
+#                 "__year__": "2022",
+#             }
+#         )
+#     )

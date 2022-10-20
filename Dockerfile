@@ -1,9 +1,12 @@
-FROM python:3.10
+FROM python:3.9-slim
 
-COPY ./ ./
+WORKDIR /src/app
 
-RUN pip install -r requirements.txt
+COPY . ./src/app
+
+RUN pip install -r ./src/app/requirements.txt
 
 EXPOSE 8501
 
-CMD ["streamlit", "run", "main.py"]
+ENTRYPOINT [ "streamlit", "run" ] 
+CMD [ "./src/app/main.py" ]
