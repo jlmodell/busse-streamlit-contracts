@@ -22,7 +22,7 @@ db = client.bussepricing
 contracts = db.contract_prices
 
 filter_contracts_by_date = [
-    datetime(2022, 12, 31, 0, 0, 0),
+    datetime(2022, 12, 1, 0, 0, 0),
     datetime(2024, 12, 31, 0, 0, 0),
 ]
 
