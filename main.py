@@ -19,11 +19,13 @@ assert MONGODB_URI is not None, "MONGODB_URI is not set"
 client = MongoClient(MONGODB_URI)
 db = client.bussepricing
 
-contracts = db.contract_prices
+contracts = db.get_collection("contract_prices")
+# costs = db.get_collection("costs")
+# customers = db.get_collection("customers")
 
 filter_contracts_by_date = [
     datetime(2022, 12, 1, 0, 0, 0),
-    datetime(2024, 12, 31, 0, 0, 0),
+    datetime(2050, 12, 31, 0, 0, 0),
 ]
 
 df = pd.DataFrame(
@@ -146,18 +148,39 @@ df = filter_dataframe(df)
 
 chart_data = df.groupby("contractend").count()["contractnumber"]
 
-st.bar_chart(chart_data)
-st.dataframe(df)
+PASSWORD = os.getenv("ACCESS_PASS")
+assert PASSWORD is not None, "ACCESS_PASS is not set"
 
-# if __name__ == "__main__":
-#     db2 = client.busserebatetraces
-#     dw = db2.data_warehouse
-#     print(
-#         dw.delete_many(
-#             {
-#                 "__file__": "OM_R13104_09_2022.xlsx",
-#                 "__month__": "09",
-#                 "__year__": "2022",
-#             }
-#         )
-#     )
+
+def check_password():
+    """Returns `True` if the user had the correct password."""
+
+    def password_entered():
+        """Checks whether a password entered by the user is correct."""
+        if st.session_state["password"] == PASSWORD:
+            st.session_state["password_correct"] = True
+            del st.session_state["password"]  # don't store password
+        else:
+            st.session_state["password_correct"] = False
+
+    if "password_correct" not in st.session_state:
+        # First run, show input for password.
+        st.text_input(
+            "Password", type="password", on_change=password_entered, key="password"
+        )
+        return False
+    elif not st.session_state["password_correct"]:
+        # Password not correct, show input + error.
+        st.text_input(
+            "Password", type="password", on_change=password_entered, key="password"
+        )
+        st.error("😕 Password incorrect")
+        return False
+    else:
+        # Password correct.
+        return True
+
+
+if check_password():
+    st.bar_chart(chart_data)
+    st.dataframe(df)
